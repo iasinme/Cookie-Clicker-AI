@@ -530,13 +530,9 @@ function checkStockMarket(){ //this function to be run every 60 seconds
 	
 	for (var i in stocksBought){
 		if (stocksBought[i][1] > 0){ //if I own stock.  logic to sell
-			//console.log("bought rank: " + stocksBought[i][2]);
-			//console.log("current rank: " + stocksCurrent[i][2]);
 			if (stocksBought[i][2] < stocksCurrent[i][2]){ //if bought rank is less than current rank
 				stocksBought[i][4] = sellStock(i);
 			}else if (stocksBought[i][2] == stocksCurrent[i][2]){ //if ranks are equal
-				//console.log("bought diff: " + stocksBought[i][3]);
-				//console.log("current diff: " + stocksCurrent[i][3]);
 				if (stocksBought[i][1] < stocksCurrent[i][1]){ //if bought value is less than current value   *possibly include 2nd condition to make value difference > 5 or something
 					stocksBought[i][4] = sellStock(i);
 				}else{
@@ -575,6 +571,8 @@ function buyStock(stock){
 		var amount = StockMarket.getGoodMaxStock(StockMarket.goodsById[stock]); //get max number of stocks
 		if (StockMarket.buyGood(stock, Math.ceil(amount * 0.5))){ //.buyGood function has price check built in
 			stocksBought[stock][1] = StockMarket.goodsById[stock].val; //store traded stock value
+			stocksBought[stock][2] = Rank(stock, stocksBought[stock][1]); //reset rank
+			stocksBought[stock][3] = distFromAvg(stock, stocksBought[stock][1], stocksBought[stock][2]); //reset difference
 			console.log("Bought " + Math.ceil(amount * 0.5) + " shares of " + stocksBought[stock][0] + " at $" + stocksBought[stock][1]);
 			return true;
 		}
@@ -588,6 +586,10 @@ function sellStock(stock){
 		StockMarket.sellGood(stock, 10000); //10000 is the built in number used to sell all
 		
 		console.log("Sold all shares of " + stocksCurrent[stock][0] + " at $" + stocksCurrent[stock][1]);
+		//console.log("Bought Value: " + boughtCurrent[stock][1])
+		//console.log("Current Value: " + stocksCurrent[stock][1])
+		//console.log("Bought Rank: " + boughtCurrent[stock][2])
+		//console.log("Current Rank: " + stocksCurrent[stock][2])
 		
 		stocksBought[stock][1] = 0; //reset traded stock value
 		stocksBought[stock][2] = Rank(stock, 0);
