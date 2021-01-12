@@ -530,14 +530,14 @@ function checkStockMarket(){ //this function to be run every 60 seconds
 	
 	for (var i in stocksBought){
 		if (stocksBought[i][1] > 0){ //if I own stock.  logic to sell
-			console.log("bought rank: " + stocksBought[i][2]);
-			console.log("current rank: " + stocksCurrent[i][2]);
+			//console.log("bought rank: " + stocksBought[i][2]);
+			//console.log("current rank: " + stocksCurrent[i][2]);
 			if (stocksBought[i][2] < stocksCurrent[i][2]){ //if bought rank is less than current rank
 				stocksBought[i][4] = sellStock(i);
 			}else if (stocksBought[i][2] == stocksCurrent[i][2]){ //if ranks are equal
-				console.log("bought diff: " + stocksBought[i][3]);
-				console.log("current diff: " + stocksCurrent[i][3]);
-				if (stocksBought[i][3] < stocksCurrent[i][3]){ //if bought difference from average is less than current difference from average
+				//console.log("bought diff: " + stocksBought[i][3]);
+				//console.log("current diff: " + stocksCurrent[i][3]);
+				if (stocksBought[i][1] < stocksCurrent[i][1]){ //if bought value is less than current value   *possibly include 2nd condition to make value difference > 5 or something
 					stocksBought[i][4] = sellStock(i);
 				}else{
 					stocksBought[i][4] = false;
