@@ -515,7 +515,7 @@ function distFromAvg(stock, value, rank){ //returns difference of value and rank
 	var buildingAvgs = marketAvg[stock];
 	
 	if (rank > 0){
-		diff = value - buildingAvgs[rank-1];
+		diff = buildingAvgs[rank-1] - value;
 	}
 	
 	return diff;
