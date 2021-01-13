@@ -533,7 +533,7 @@ function checkStockMarket(){ //this function to be run every 60 seconds
 			if (stocksBought[i][2] < stocksCurrent[i][2]){ //if bought rank is less than current rank
 				stocksBought[i][4] = sellStock(i);
 			}else if (stocksBought[i][2] == stocksCurrent[i][2]){ //if ranks are equal
-				if (stocksBought[i][1] < stocksCurrent[i][1] && stocksBought[i][1] > marketAvg[i][stocksBought[i][2] - 1]){ //if bought value is less than current value
+				if (stocksBought[i][1] < stocksCurrent[i][1] && stocksBought[i][1] < marketAvg[i][stocksBought[i][2] - 1]){ //if bought value is less than current value
 					stocksBought[i][4] = sellStock(i);
 				}else{
 					stocksBought[i][4] = false;
