@@ -547,16 +547,16 @@ function checkStockMarket(){ //this function to be run every 60 seconds
 			
 			switch(stocksCurrent[i][2]) {
 				case 1:
-					multiplier = 2 / 3;
+					multiplier =  1/ 4;
 				break;
 				case 2:
-					multiplier = 1 / 2;
+					multiplier = 1 / 10;
 				break;
 				case 3:
-					multiplier = 1 / 4;
+					multiplier = 1 / 50;
 				break;
 				default: //possible error might occur here if rank is -1
-					multiplier = 1 / 10;
+					multiplier = 1 / 100;
 			}
 			
 			if (stocksCurrent[i][1] <= (avg * (multiplier) + min * (1 - multiplier))){
