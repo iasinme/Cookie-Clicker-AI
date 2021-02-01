@@ -526,7 +526,7 @@ function checkStockMarket(){ //this function to be run every 60 seconds
 	var min;
 	var multiplier;
 	
-	if (Stockmarket.brokers < 50) return;
+	if (StockMarket.brokers < 50) return;
 	
 	getStockPrices();
 	
