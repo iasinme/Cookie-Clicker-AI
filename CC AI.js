@@ -96,7 +96,7 @@ function startAI() {
 	
 	//collectSMdata = setInterval(getSMData, (60 * 1000)); //functioning
 
-    goldenClick = setInterval(function () { //functioning
+    var goldenClick = setInterval(function () { //functioning
             Game.shimmers.forEach(function (shimmer) {
                 if (shimmer.type == "golden")
                     shimmer.wrath = 0
@@ -516,6 +516,17 @@ function Rank(stock, value){ //returns rank of stock 1-4.  -1 if error
 	}
 	
 	return rank;
+}
+
+function distFromAvg(stock, value, rank){ //returns difference of value and rank average.  null if error
+	var diff = null;
+	var buildingAvgs = marketAvg[stock];
+	
+	if (rank > 0){
+		diff = buildingAvgs[rank-1] - value;
+	}
+	
+	return diff;
 }
 
 function checkStockMarket(){ //this function to be run every 60 seconds
