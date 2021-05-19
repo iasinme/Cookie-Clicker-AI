@@ -470,7 +470,11 @@ function initializeStocksBought(){
 			arr.push(0);
 		}
 		arr.push(Rank(i, arr[1]));							//rank
-		arr.push(distFromAvg(i, arr[1], arr[2]));			//distance from average
+		if (StockMarket.goodsById[i].stock > 0) {  			//stock value
+			arr.push(Date.now()); 							//Can't track when you bought stock so we have to just make up a number i.e. now
+		} else {
+			arr.push(0);
+		}
 		arr.push(false);									//if traded this tick
 		
 		stocksBought.push(arr);
@@ -486,7 +490,7 @@ function getStockPrices(){
 		arr.push(StockMarket.goodsById[i].building.name);	//name
 		arr.push(StockMarket.goodsById[i].val);				//stock value
 		arr.push(Rank(i, arr[1]));							//rank
-		arr.push(distFromAvg(i, arr[1], arr[2]));			//distance from average
+		arr.push(Date.now());								//time stock checked
 		arr.push(null);										//if traded this tick
 		
 		stocksCurrent.push(arr);
@@ -518,7 +522,7 @@ function Rank(stock, value){ //returns rank of stock 1-4.  -1 if error
 	return rank;
 }
 
-function distFromAvg(stock, value, rank){ //returns difference of value and rank average.  null if error
+function buyTime(stock, value, rank){ //returns difference of value and rank average.  null if error
 	var diff = null;
 	var buildingAvgs = marketAvg[stock];
 	
@@ -542,14 +546,14 @@ function checkStockMarket(){ //this function to be run every 60 seconds
 		avg = marketAvg[i][stocksCurrent[i][2] - 1];
 		
 		if (stocksBought[i][1] > 0){ //if I own stock.  logic to sell
-			max = (stocksCurrent[i][2] < 4) ? (marketAvg[i][stocksCurrent[i][2] - 1] + marketAvg[i][stocksCurrent[i][2]]) / 2 : 10000;
+			max = (stocksCurrent[i][2] < 4) ? (avg + marketAvg[i][stocksCurrent[i][2]]) / 2 : 10000;
 			
 			switch(stocksCurrent[i][2]) {
 				case 1:
 					multiplier =  .99;
 				break;
 				case 2:
-					multiplier = .95;
+					multiplier = .90;
 				break;
 				case 3:
 					multiplier = .75;
@@ -558,29 +562,30 @@ function checkStockMarket(){ //this function to be run every 60 seconds
 					multiplier = 0;
 			}
 			
-			if (stocksBought[i][1] < stocksCurrent[i][1] && stocksCurrent[i][1] >= ((max * multiplier) + avg * (1 - multiplier)) && stocksCurrent[i][1] <= max){
+			if (stocksBought[i][1] < stocksCurrent[i][1] && (stocksCurrent[i][1] >= ((max * multiplier) + avg * (1 - multiplier)) && stocksCurrent[i][1] <= max) || (stocksCurrent[i][3] - stocksBought[i][3] >= (1 * 60 * 60 * 1000))){
 				stocksBought[i][4] = sellStock(i);
 			}else{
 				stocksBought[i][4] = false;
 			}
 		}else{ //I don't own stock.  logic to buy
-			min = (stocksCurrent[i][2] > 1) ? (marketAvg[i][stocksCurrent[i][2] - 1] + marketAvg[i][stocksCurrent[i][2] - 2]) / 2 : 0;
+			min = (stocksCurrent[i][2] > 1) ? (avg + marketAvg[i][stocksCurrent[i][2] - 2]) / 2 : 0;
+			Oavg = (marketAvg[i][0] + marketAvg[i][4])/2
 			
 			switch(stocksCurrent[i][2]) {
 				case 1:
 					multiplier =  .25;
 				break;
 				case 2:
-					multiplier = .1;
+					multiplier = .10;
 				break;
 				case 3:
-					multiplier = .02;
+					multiplier = .05;
 				break;
 				default: //possible error might occur here if rank is -1
 					multiplier = .01;
 			}
 			
-			if (stocksCurrent[i][1] <= ((avg * multiplier) + min * (1 - multiplier)) && stocksCurrent[i][1] >= min){
+			if ((stocksCurrent[i][1] <= ((avg * multiplier) + min * (1 - multiplier)) && stocksCurrent[i][1] >= min) || (stocksCurrent[i][1] <= Oavg && stocksCurrent[i][3] - stocksBought[i][3] >= (1 * 60 * 60 * 1000))){
 				stocksBought[i][4] = buyStock(i);
 			}
 		}
@@ -588,12 +593,12 @@ function checkStockMarket(){ //this function to be run every 60 seconds
 }
 
 function buyStock(stock){
-	if (!(stocksBought[stock][4])){ //if stock traded this tick = false
-		var amount = StockMarket.getGoodMaxStock(StockMarket.goodsById[stock]); //get max number of stocks
-		if (StockMarket.buyGood(stock, Math.ceil(amount * 0.5))){ //.buyGood function has price check built in
+	if (!(stocksBought[stock][4])){ //if stock traded last tick = false
+		//var amount = StockMarket.getGoodMaxStock(StockMarket.goodsById[stock]); //get max number of stocks
+		if (StockMarket.buyGood(stock, 10000)){ //.buyGood function has price check built in			Math.ceil(amount * 0.5)
 			stocksBought[stock][1] = StockMarket.goodsById[stock].val; //store traded stock value
 			stocksBought[stock][2] = Rank(stock, stocksBought[stock][1]); //reset rank
-			stocksBought[stock][3] = distFromAvg(stock, stocksBought[stock][1], stocksBought[stock][2]); //reset difference
+			stocksBought[stock][3] = Date.now(); //store time bought
 			//console.log("Bought " + Math.ceil(amount * 0.5) + " shares of " + stocksBought[stock][0] + " at $" + stocksBought[stock][1]);
 			return true;
 		}
@@ -603,14 +608,14 @@ function buyStock(stock){
 }
 
 function sellStock(stock){
-	if (!(stocksBought[stock][4])){ //if stock traded this tick = false
+	if (!(stocksBought[stock][4])){ //if stock traded last tick = false
 		StockMarket.sellGood(stock, 10000); //10000 is the built in number used to sell all
 		
 		//console.log("Sold all shares of " + stocksCurrent[stock][0] + " at $" + stocksCurrent[stock][1]);
 		
 		stocksBought[stock][1] = 0; //reset traded stock value
-		stocksBought[stock][2] = Rank(stock, 0);
-		stocksBought[stock][3] = distFromAvg(stock, 0, stocksBought[stock][2]);
+		stocksBought[stock][2] = Rank(stock, 0); //reset rank
+		stocksBought[stock][3] = Date.now(); //store time sold
 		return true;
 	}
 	
