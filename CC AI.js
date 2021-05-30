@@ -569,7 +569,7 @@ function checkStockMarket(){ //this function to be run every 60 seconds
 			}
 		}else{ //I don't own stock.  logic to buy
 			min = (stocksCurrent[i][2] > 1) ? (avg + marketAvg[i][stocksCurrent[i][2] - 2]) / 2 : 0;
-			Oavg = (marketAvg[i][0] + marketAvg[i][4])/2
+			Oavg = (marketAvg[i][0] + marketAvg[i][3])/2
 			
 			switch(stocksCurrent[i][2]) {
 				case 1:
