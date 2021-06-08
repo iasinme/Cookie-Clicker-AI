@@ -593,9 +593,25 @@ function checkStockMarket(){ //this function to be run every 60 seconds
 }
 
 function buyStock(stock){
+	var multiplier;
 	if (!(stocksBought[stock][4])){ //if stock traded last tick = false
-		//var amount = StockMarket.getGoodMaxStock(StockMarket.goodsById[stock]); //get max number of stocks
-		if (StockMarket.buyGood(stock, 10000)){ //.buyGood function has price check built in			Math.ceil(amount * 0.5)
+		var amount = StockMarket.getGoodMaxStock(StockMarket.goodsById[stock]); //get max number of stocks
+		
+		switch(stocksCurrent[stock][2]) {
+			case 1:
+				multiplier =  1;
+			break;
+			case 2:
+				multiplier = 0.5;
+			break;
+			case 3:
+				multiplier = 0.2;
+			break;
+			default: //possible error might occur here if rank is -1
+				multiplier = 0.1;
+		}
+		
+		if (StockMarket.buyGood(stock, Math.ceil(amount * multiplier))){ //.buyGood function has price check built in			Math.ceil(amount * 0.5)
 			stocksBought[stock][1] = StockMarket.goodsById[stock].val; //store traded stock value
 			stocksBought[stock][2] = Rank(stock, stocksBought[stock][1]); //reset rank
 			stocksBought[stock][3] = Date.now(); //store time bought
