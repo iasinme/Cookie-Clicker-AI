@@ -562,7 +562,7 @@ function checkStockMarket(){ //this function to be run every 60 seconds
 					multiplier = 0;
 			}
 			
-			if (stocksBought[i][1] < stocksCurrent[i][1] && (stocksCurrent[i][1] >= ((max * multiplier) + avg * (1 - multiplier)) && stocksCurrent[i][1] <= max) || (stocksCurrent[i][3] - stocksBought[i][3] >= (1 * 60 * 60 * 1000))){
+			if (stocksBought[i][1] < stocksCurrent[i][1] && ((stocksCurrent[i][1] >= ((max * multiplier) + avg * (1 - multiplier)) && stocksCurrent[i][1] <= max) || (stocksCurrent[i][3] - stocksBought[i][3] >= (1 * 60 * 60 * 1000)))){
 				stocksBought[i][4] = sellStock(i);
 			}else{
 				stocksBought[i][4] = false;
