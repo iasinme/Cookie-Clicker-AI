@@ -1,10 +1,9 @@
-//version 14
+//version 15
 
 /*this is super cheaty
 var obj = 16;
 var time = 70;
 var pow = Game.ObjectsById[obj].amount/10+1;
-
 Game.gainBuff('building buff', time, pow, obj);
 */
 
@@ -94,7 +93,7 @@ function startAI() {
 	
 	//collectHCData = setInterval(getHCData, (30 * 60 * 1000)); //functioning
 	
-	//collectSMdata = setInterval(getSMData, (60 * 1000)); //functioning
+	collectSMdata = setInterval(getSMData, (60 * 1000)); //functioning
 
     var goldenClick = setInterval(function () { //functioning
             Game.shimmers.forEach(function (shimmer) {
@@ -562,7 +561,8 @@ function checkStockMarket(){ //this function to be run every 60 seconds
 					multiplier = 0;
 			}
 			
-			if (stocksBought[i][1] < stocksCurrent[i][1] && ((stocksCurrent[i][1] >= ((max * multiplier) + avg * (1 - multiplier)) && stocksCurrent[i][1] <= max) || (stocksCurrent[i][3] - stocksBought[i][3] >= (1 * 60 * 60 * 1000)))){
+			//if (stocksBought[i][1] < stocksCurrent[i][1] && ((stocksCurrent[i][1] >= ((max * multiplier) + avg * (1 - multiplier)) && stocksCurrent[i][1] <= max) || (stocksCurrent[i][3] - stocksBought[i][3] >= (1 * 60 * 60 * 1000)))){
+			if (stocksBought[i][1] < stocksCurrent[i][1] && stocksCurrent[i][1] >= ((max * multiplier) + avg * (1 - multiplier)) && stocksCurrent[i][1] <= max){
 				stocksBought[i][4] = sellStock(i);
 			}else{
 				stocksBought[i][4] = false;
