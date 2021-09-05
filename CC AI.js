@@ -44,6 +44,7 @@ var autoDragon;
 var autoBuy;
 var autoAscension;
 var fortuneCheck;
+var goldenClick;
 var seasonCheck;
 var dragonCheck;
 var noWrinkler;
@@ -95,7 +96,7 @@ function startAI() {
 	
 	collectSMdata = setInterval(getSMData, (60 * 1000)); //functioning
 
-    var goldenClick = setInterval(function () { //functioning
+    goldenClick = setInterval(function () { //functioning
             Game.shimmers.forEach(function (shimmer) {
                 if (shimmer.type == "golden")
                     shimmer.wrath = 0
@@ -602,14 +603,16 @@ function buyStock(stock){
 				multiplier =  1;
 			break;
 			case 2:
-				multiplier = 0.5;
+				multiplier = 0.66;
 			break;
 			case 3:
 				multiplier = 0.2;
 			break;
 			default: //possible error might occur here if rank is -1
-				multiplier = 0.1;
+				multiplier = 0.05;
 		}
+		
+		multiplier = 1;
 		
 		if (StockMarket.buyGood(stock, Math.ceil(amount * multiplier))){ //.buyGood function has price check built in			Math.ceil(amount * 0.5)
 			stocksBought[stock][1] = StockMarket.goodsById[stock].val; //store traded stock value
