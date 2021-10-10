@@ -695,7 +695,7 @@ function downloadStockMarketData() {
 	
 	csv += "\n";
 	
-	SMData.forEach(function (row) {
+	SMdata.forEach(function (row) {
 		csv += row.join(",");
 		csv += "\n";
 	});
