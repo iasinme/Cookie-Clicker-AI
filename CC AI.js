@@ -707,7 +707,7 @@ function downloadStockMarketData() {
 	hiddenElement.click();
 
 	SMdata = [];
-	collectData = setInterval(getSMData, (60 * 1000));
+	collectSMdata = setInterval(getSMData, (60 * 1000));
 }
 
 function buyable(ID) {
