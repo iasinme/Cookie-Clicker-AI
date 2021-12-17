@@ -94,7 +94,7 @@ function startAI() {
 	
 	//collectHCData = setInterval(getHCData, (30 * 60 * 1000)); //functioning
 	
-	collectSMdata = setInterval(getSMData, (60 * 1000)); //functioning
+	//collectSMdata = setInterval(getSMData, (60 * 1000)); //functioning
 
     goldenClick = setInterval(function () { //functioning
             Game.shimmers.forEach(function (shimmer) {
