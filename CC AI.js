@@ -1,4 +1,4 @@
-//version 15
+//version 16
 
 /*this is super cheaty
 var obj = 16;
@@ -17,22 +17,22 @@ var lowestPP;
 var stocksBought = [];
 var stocksCurrent = [];
 var marketAvg = [
-		[4, 23, 47, 56], //Farm
-		[4, 18, 34, 58], //Mine
-		[4, 20, 46, 68], //Factory
-		[4, 30, 54, 78], //Bank
-		[4, 41, 64, 87], //Temple
-		[8, 51, 75, 96], //Wizard Tower
-		[9, 60, 82, 108], //Shipment
-		[11, 71, 95, 118], //Alchemy Lab
-		[17, 80, 103, 129], //Portal
-		[21, 90, 115, 140], //Time Machine
-		[25, 97, 124, 141], //Antimatter Condenser
-		[43, 111, 135, 142], //Prism
-		[56, 448, 142, 150], //Chancemaker
-		[69, 125, 148, 160], //Fractal Engine
-		[63, 136, 150, 170], //Javascript Console
-		[84, 150, 172, 181]]; //Idleverse
+		[6, 24, 50, 90], //Farm
+		[8, 35, 60, 90], //Mine
+		[15, 45, 70, 110], //Factory
+		[10, 30, 50, 80], //Bank
+		[10, 40, 65, 80], //Temple
+		[10, 50, 75, 100], //Wizard tower
+		[10, 60, 85, 110], //Shipment
+		[15, 70, 95, 120], //Alchemy lab
+		[15, 80, 105, 130], //Portal
+		[20, 90, 115, 140], //Time machine
+		[30, 100, 125, 140], //Antimatter condenser
+		[40, 110, 130, 140], //Prism
+		[45, 110, 135, 140], //Chancemaker
+		[50, 120, 140, 150], //Fractal engine
+		[50, 110, 135, 145], //Javascript console
+		[45, 150, 130, 140]]; //Idleverse
 
 var atMarket;
 var autoAscensionActive;
