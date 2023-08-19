@@ -68,35 +68,35 @@ function startAI() {
 	buyingThings = false;
 	seasonCounter = 0;
 	
-    autoBuy = setInterval(MarketCheck, (10 * 60 * 1000)); //functioning
-
-    //autoAscension = setInterval(function(){AutoAscend(false)}, (24 * 60 * 60 * 1000)); //functioning
-
-    //ascensionCheck = setInterval(AscendCheck, (24 * 60 * 60 * 1000)); //functioning
-
-    fortuneCheck = setInterval(ClickTicker, (10 * 1000)); //functioning
-
-    seasonCheck = setInterval(CycleSeasons, (30 * 60 * 1000)); //functioning
+	autoBuy = setInterval(MarketCheck, (10 * 60 * 1000)); //functioning
+	
+	//autoAscension = setInterval(function(){AutoAscend(false)}, (24 * 60 * 60 * 1000)); //functioning
+	
+	//ascensionCheck = setInterval(AscendCheck, (24 * 60 * 60 * 1000)); //functioning
+	
+	fortuneCheck = setInterval(ClickTicker, (10 * 1000)); //functioning
+	
+	seasonCheck = setInterval(CycleSeasons, (30 * 60 * 1000)); //functioning
 	
 	dragonCheck = setInterval(TrainDragon, (10 * 60 * 1000)); //functioning
-
-    noWrinkler = setInterval(Game.CollectWrinklers, (30 * 60 * 1000)); //functioning
+	
+	noWrinkler = setInterval(Game.CollectWrinklers, (30 * 60 * 1000)); //functioning
 	
 	autoCast = setInterval(Cast, (10 * 60 * 1000)); //functioning
 	
-	autoStocks = setInterval(CheckStockMarket, (60 * 1000)); //untested
+	//autoStocks = setInterval(CheckStockMarket, (60 * 1000)); //should be functioning with new buildings
 	
 	//collectHCData = setInterval(getHCData, (30 * 60 * 1000)); //functioning
 	
-	//collectSMdata = setInterval(getSMData, (60 * 1000)); //functioning
-
-    goldenClick = setInterval(function () { //functioning
-            Game.shimmers.forEach(function (shimmer) {
-                if (shimmer.type == "golden")
-                    shimmer.wrath = 0
-                shimmer.pop()
-            })
-        }, 500);
+	collectSMdata = setInterval(getSMData, (60 * 1000)); //functioning
+	
+	goldenClick = setInterval(function () { //functioning
+		Game.shimmers.forEach(function (shimmer) {
+		if (shimmer.type == "golden")
+			shimmer.wrath = 0
+		shimmer.pop()
+		})
+	}, 500);
 }
 
 function stopAI() {
