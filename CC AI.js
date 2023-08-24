@@ -149,7 +149,7 @@ function MarketCheck() {
 
     if (!buyingThings) {
         atMarket = setInterval(BuyThings, 10);
-        console.log("Going to Market:\n" + new Date().getTime());
+        //console.log("Going to Market:\n" + new Date().getTime());
     }
 }
 
@@ -168,9 +168,9 @@ function BuyThings() {
         }
     } else { //if it's an upgrade
         if (myCookies >= upgradeList[lowestPP[1]].getPrice()) {
-            upgradeList[lowestPP[1]].buy(true); //.buy(true) allows me to buy 'One Mind' without pressing the 'ok' button
-            myCookies = Game.cookies;
-            upgradeBought = true;
+			upgradeList[lowestPP[1]].buy(true); //.buy(true) allows me to buy 'One Mind' without pressing the 'ok' button
+			myCookies = Game.cookies;
+			upgradeBought = true;
 			//console.log("Upgrade Bought: " + upgradeList[lowestPP[1]].name + "\tID: " + upgradeList[lowestPP[1]].id);
         }
     }
@@ -185,7 +185,7 @@ function BuyThings() {
     if ((!buildingBought && !upgradeBought)) {
         clearInterval(atMarket);
         buyingThings = false;
-        console.log("Done at Market:\n" + new Date().getTime());
+        //console.log("Done at Market:\n" + new Date().getTime());
     }
 }
 
