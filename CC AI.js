@@ -1,4 +1,4 @@
-//version 17
+//version 18
 
 /*this is super cheaty
 var obj = 16;
@@ -15,7 +15,7 @@ var buyingThings;
 var lowestPP;
 var stocksBought = [];
 var stocksCurrent = [];
-var marketAvg = [
+/*var marketAvg = [  //- Obsolete
 		[6, 24, 50, 90], //Farm
 		[8, 35, 60, 90], //Mine
 		[15, 45, 70, 110], //Factory
@@ -31,7 +31,26 @@ var marketAvg = [
 		[45, 110, 135, 140], //Chancemaker
 		[50, 120, 140, 150], //Fractal engine
 		[50, 110, 135, 145], //Javascript console
-		[45, 150, 130, 140]]; //Idleverse
+		[45, 150, 130, 140]]; //Idleverse */
+var marketAvg = [ //These numbers came from an analysis of the stock market from Sept-Nov 2023
+	40, //Farm
+	45, //Mine, 
+	47, //Factory
+	51, //Bank
+	57, //Temple
+	65, //Wizard tower
+	70, //Shipment
+	74, //Alchemy lab
+	80, //Portal
+	88, //Time machine
+	96, //Antimatter condenser
+	102, //Prism
+	108, //Chancemaker
+	115, //Fractal engine
+	124, //Javascript console
+	132, //Idleverse
+	137, //Cortex baker
+	145] //You
 
 var atMarket;
 var autoAscensionActive;
@@ -68,35 +87,35 @@ function startAI() {
 	buyingThings = false;
 	seasonCounter = 0;
 	
-	autoBuy = setInterval(MarketCheck, (10 * 60 * 1000)); //functioning
-	
-	//autoAscension = setInterval(function(){AutoAscend(false)}, (24 * 60 * 60 * 1000)); //functioning
-	
-	//ascensionCheck = setInterval(AscendCheck, (24 * 60 * 60 * 1000)); //functioning
-	
-	fortuneCheck = setInterval(ClickTicker, (10 * 1000)); //functioning
-	
-	seasonCheck = setInterval(CycleSeasons, (30 * 60 * 1000)); //functioning
+    autoBuy = setInterval(MarketCheck, (10 * 60 * 1000)); //functioning
+
+    //autoAscension = setInterval(function(){AutoAscend(false)}, (24 * 60 * 60 * 1000)); //functioning
+
+    //ascensionCheck = setInterval(AscendCheck, (24 * 60 * 60 * 1000)); //functioning
+
+    fortuneCheck = setInterval(ClickTicker, (10 * 1000)); //functioning
+
+    seasonCheck = setInterval(CycleSeasons, (30 * 60 * 1000)); //functioning
 	
 	dragonCheck = setInterval(TrainDragon, (10 * 60 * 1000)); //functioning
-	
-	noWrinkler = setInterval(Game.CollectWrinklers, (30 * 60 * 1000)); //functioning
+
+    noWrinkler = setInterval(Game.CollectWrinklers, (30 * 60 * 1000)); //functioning
 	
 	autoCast = setInterval(Cast, (10 * 60 * 1000)); //functioning
 	
-	//autoStocks = setInterval(CheckStockMarket, (60 * 1000)); //should be functioning with new buildings
+	autoStocks = setInterval(CheckStockMarket, (60 * 1000)); //functioning, being optimized
 	
 	//collectHCData = setInterval(getHCData, (30 * 60 * 1000)); //functioning
 	
-	collectSMdata = setInterval(getSMData, (60 * 1000)); //functioning
-	
-	goldenClick = setInterval(function () { //functioning
-		Game.shimmers.forEach(function (shimmer) {
-		if (shimmer.type == "golden")
-			shimmer.wrath = 0
-		shimmer.pop()
-		})
-	}, 500);
+	//collectSMdata = setInterval(getSMData, (60 * 1000)); //functioning
+
+    goldenClick = setInterval(function () { //functioning
+            Game.shimmers.forEach(function (shimmer) {
+                if (shimmer.type == "golden")
+                    shimmer.wrath = 0
+                shimmer.pop()
+            })
+        }, 500);
 }
 
 function stopAI() {
@@ -149,7 +168,7 @@ function MarketCheck() {
 
     if (!buyingThings) {
         atMarket = setInterval(BuyThings, 10);
-        //console.log("Going to Market:\n" + new Date().getTime());
+        console.log("Going to Market:\n" + new Date().getTime());
     }
 }
 
@@ -168,9 +187,9 @@ function BuyThings() {
         }
     } else { //if it's an upgrade
         if (myCookies >= upgradeList[lowestPP[1]].getPrice()) {
-			upgradeList[lowestPP[1]].buy(true); //.buy(true) allows me to buy 'One Mind' without pressing the 'ok' button
-			myCookies = Game.cookies;
-			upgradeBought = true;
+            upgradeList[lowestPP[1]].buy(true); //.buy(true) allows me to buy 'One Mind' without pressing the 'ok' button
+            myCookies = Game.cookies;
+            upgradeBought = true;
 			//console.log("Upgrade Bought: " + upgradeList[lowestPP[1]].name + "\tID: " + upgradeList[lowestPP[1]].id);
         }
     }
@@ -185,7 +204,7 @@ function BuyThings() {
     if ((!buildingBought && !upgradeBought)) {
         clearInterval(atMarket);
         buyingThings = false;
-        //console.log("Done at Market:\n" + new Date().getTime());
+        console.log("Done at Market:\n" + new Date().getTime());
     }
 }
 
@@ -235,6 +254,7 @@ function ResetLists() { //creates a list of viable upgrades
             Game.UpgradesInStore[i].id != 564 && //Shimmering Veil [On]
             Game.UpgradesInStore[i].id != 452 && //Sugar Frenzy
             Game.UpgradesInStore[i].id != 361 && //Golden Cookie Sound Selector
+			Game.UpgradesInStore[i].id != 765 && //Jukebox
             Game.UpgradesInStore[i].id != 333 && //Milk Selector
             Game.UpgradesInStore[i].id != 414 && //Background Selector
             Game.UpgradesInStore[i].id != 227 && //Chocolate Egg
@@ -462,11 +482,11 @@ function initializeStocksBought(){
 		arr = [];
 		arr.push(StockMarket.goodsById[i].building.name);	//name
 		if (StockMarket.goodsById[i].stock > 0) {  			//stock value
-			arr.push((marketAvg[i][3] + marketAvg[i][0]) / 2); //The game doesn't track the price at which you bought stock so we have to just make up a number i.e. the overall stock average
+			arr.push(marketAvg[i]); //The game doesn't track the price at which you bought stock so we have to just make up a number i.e. the overall stock average
 		} else {
 			arr.push(0);
 		}
-		arr.push(Rank(i, arr[1]));							//rank
+		//arr.push(Rank(i, arr[1]));							//rank - Obsolete
 		if (StockMarket.goodsById[i].stock > 0) {  			//stock value
 			arr.push(Date.now()); 							//Can't track when you bought stock so we have to just make up a number i.e. now
 		} else {
@@ -486,7 +506,7 @@ function getStockPrices(){
 		arr = []
 		arr.push(StockMarket.goodsById[i].building.name);	//name
 		arr.push(StockMarket.goodsById[i].val);				//stock value
-		arr.push(Rank(i, arr[1]));							//rank
+		//arr.push(Rank(i, arr[1]));						//rank - Obsolete?
 		arr.push(Date.now());								//time stock checked
 		arr.push(null);										//if traded this tick
 		
@@ -540,51 +560,19 @@ function CheckStockMarket(){ //this function to be run every 60 seconds
 	getStockPrices();
 	
 	for (var i in stocksBought){
-		avg = marketAvg[i][stocksCurrent[i][2] - 1];
+		avg = marketAvg[i];
 		
 		if (stocksBought[i][1] > 0){ //if I own stock.  logic to sell
-			max = (stocksCurrent[i][2] < 4) ? (avg + marketAvg[i][stocksCurrent[i][2]]) / 2 : 10000;
-			
-			switch(stocksCurrent[i][2]) {
-				case 1:
-					multiplier =  .99;
-				break;
-				case 2:
-					multiplier = .90;
-				break;
-				case 3:
-					multiplier = .75;
-				break;
-				default: //possible error might occur here if rank is -1
-					multiplier = 0;
-			}
-			
-			//if (stocksBought[i][1] < stocksCurrent[i][1] && ((stocksCurrent[i][1] >= ((max * multiplier) + avg * (1 - multiplier)) && stocksCurrent[i][1] <= max) || (stocksCurrent[i][3] - stocksBought[i][3] >= (1 * 60 * 60 * 1000)))){
-			if (stocksBought[i][1] < stocksCurrent[i][1] && stocksCurrent[i][1] >= ((max * multiplier) + avg * (1 - multiplier)) && stocksCurrent[i][1] <= max){
-				stocksBought[i][4] = sellStock(i);
+			if (stocksCurrent[i][1] > stocksBought[i][1]){
+				stocksBought[i][3] = sellStock(i);
+			}else if (stocksBought[i][2] - Date.now() > (30 * 60 * 1000) && stocksCurrent[i][1] > marketAvg[i] * 0.9){  //I should add logic here to check if the stock is rising or falling and attempt to not loose as much money so I can hopefully buy again at a lower price.
+				stocksBought[i][3] = sellStock(i);
 			}else{
-				stocksBought[i][4] = false;
+				stocksBought[i][3] = false;
 			}
 		}else{ //I don't own stock.  logic to buy
-			min = (stocksCurrent[i][2] > 1) ? (avg + marketAvg[i][stocksCurrent[i][2] - 2]) / 2 : 0;
-			Oavg = (marketAvg[i][0] + marketAvg[i][3])/2
-			
-			switch(stocksCurrent[i][2]) {
-				case 1:
-					multiplier =  .25;
-				break;
-				case 2:
-					multiplier = .10;
-				break;
-				case 3:
-					multiplier = .05;
-				break;
-				default: //possible error might occur here if rank is -1
-					multiplier = .01;
-			}
-			
-			if ((stocksCurrent[i][1] <= ((avg * multiplier) + min * (1 - multiplier)) && stocksCurrent[i][1] >= min) || (stocksCurrent[i][1] <= Oavg && stocksCurrent[i][3] - stocksBought[i][3] >= (1 * 60 * 60 * 1000))){
-				stocksBought[i][4] = buyStock(i);
+			if (stocksCurrent[i][1] < marketAvg[i]){
+				stocksBought[i][3] = buyStock(i);
 			}
 		}
 	}
@@ -592,10 +580,10 @@ function CheckStockMarket(){ //this function to be run every 60 seconds
 
 function buyStock(stock){
 	var multiplier;
-	if (!(stocksBought[stock][4])){ //if stock traded last tick = false
+	if (!(stocksBought[stock][3])){ //if stock traded last tick = false
 		var amount = StockMarket.getGoodMaxStock(StockMarket.goodsById[stock]); //get max number of stocks
 		
-		switch(stocksCurrent[stock][2]) {
+		/*switch(stocksCurrent[stock][2]) {
 			case 1:
 				multiplier =  1;
 			break;
@@ -607,14 +595,14 @@ function buyStock(stock){
 			break;
 			default: //possible error might occur here if rank is -1
 				multiplier = 0.05;
-		}
+		}*/
 		
 		multiplier = 1;
 		
 		if (StockMarket.buyGood(stock, Math.ceil(amount * multiplier))){ //.buyGood function has price check built in			Math.ceil(amount * 0.5)
 			stocksBought[stock][1] = StockMarket.goodsById[stock].val; //store traded stock value
-			stocksBought[stock][2] = Rank(stock, stocksBought[stock][1]); //reset rank
-			stocksBought[stock][3] = Date.now(); //store time bought
+			//stocksBought[stock][2] = Rank(stock, stocksBought[stock][1]); //reset rank - Obsolete
+			stocksBought[stock][2] = Date.now(); //store time bought
 			//console.log("Bought " + Math.ceil(amount * 0.5) + " shares of " + stocksBought[stock][0] + " at $" + stocksBought[stock][1]);
 			return true;
 		}
@@ -624,14 +612,14 @@ function buyStock(stock){
 }
 
 function sellStock(stock){
-	if (!(stocksBought[stock][4])){ //if stock traded last tick = false
+	if (!(stocksBought[stock][3])){ //if stock traded last tick = false
 		StockMarket.sellGood(stock, 10000); //10000 is the built in number used to sell all
 		
 		//console.log("Sold all shares of " + stocksCurrent[stock][0] + " at $" + stocksCurrent[stock][1]);
 		
 		stocksBought[stock][1] = 0; //reset traded stock value
-		stocksBought[stock][2] = Rank(stock, 0); //reset rank
-		stocksBought[stock][3] = Date.now(); //store time sold
+		//stocksBought[stock][2] = Rank(stock, 0); //reset rank - Obsolete
+		stocksBought[stock][2] = Date.now(); //store time sold
 		return true;
 	}
 	
