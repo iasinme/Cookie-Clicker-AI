@@ -514,7 +514,7 @@ function initializeStocksBought(){
 		arr = [];
 		arr.push(StockMarket.goodsById[i].building.name);	//name
 		if (StockMarket.goodsById[i].stock > 0) {  			//stock value
-			arr.push(marketAvg[i]); //The game doesn't track the price at which you bought stock so we have to just make up a number i.e. the overall stock average
+			arr.push(marketAvg[i][0]); //The game doesn't track the price at which you bought stock so we have to just make up a number i.e. the lower stock bound
 		} else {
 			arr.push(0);
 		}
@@ -583,7 +583,6 @@ function buyTime(stock, value, rank){ //returns difference of value and rank ave
 }
 
 function CheckStockMarket(){ //this function to be run every 60 seconds
-	var keyVals;
 	var min;
 	var multiplier;
 	
@@ -592,8 +591,6 @@ function CheckStockMarket(){ //this function to be run every 60 seconds
 	getStockPrices();
 	
 	for (var i in stocksBought){
-		keyVals = marketAvg[i];
-		
 		if (stocksBought[i][1] > 0){ //if I own stock.  logic to sell
 			if (stocksCurrent[i][1] > marketAvg[i][1] - 1){ //"-1" because the data that was analized was all floored
 				stocksBought[i][3] = sellStock(i);
