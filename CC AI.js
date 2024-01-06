@@ -1,4 +1,4 @@
-//version 18
+//version 18.1
 
 /*this is super cheaty
 var obj = 16;
@@ -15,43 +15,25 @@ var buyingThings;
 var lowestPP;
 var stocksBought = [];
 var stocksCurrent = [];
-/*var marketAvg = [  //- Obsolete
-		[6, 24, 50, 90], //Farm
-		[8, 35, 60, 90], //Mine
-		[15, 45, 70, 110], //Factory
-		[10, 30, 50, 80], //Bank
-		[10, 40, 65, 80], //Temple
-		[10, 50, 75, 100], //Wizard tower
-		[10, 60, 85, 110], //Shipment
-		[15, 70, 95, 120], //Alchemy lab
-		[15, 80, 105, 130], //Portal
-		[20, 90, 115, 140], //Time machine
-		[30, 100, 125, 140], //Antimatter condenser
-		[40, 110, 130, 140], //Prism
-		[45, 110, 135, 140], //Chancemaker
-		[50, 120, 140, 150], //Fractal engine
-		[50, 110, 135, 145], //Javascript console
-		[45, 150, 130, 140]]; //Idleverse */
-var marketAvg = [ //These numbers came from an analysis of the stock market from Sept-Nov 2023
-	40, //Farm
-	45, //Mine, 
-	47, //Factory
-	51, //Bank
-	57, //Temple
-	65, //Wizard tower
-	70, //Shipment
-	74, //Alchemy lab
-	80, //Portal
-	88, //Time machine
-	96, //Antimatter condenser
-	102, //Prism
-	108, //Chancemaker
-	115, //Fractal engine
-	124, //Javascript console
-	132, //Idleverse
-	137, //Cortex baker
-	145] //You
-
+var marketAvg = [ //These numbers came from an analysis of the stock market from Sept-Nov 2023.  They're the upper and lower bounds for the 50% probablity around the average value.  basically, there's a 25% chance the stock will be lower that the min and a 25% chance it will be higher than the max.
+		[6, 50], //Farm
+		[10, 60], //Mine
+		[11, 65], //Factory
+		[12, 72], //Bank
+		[20, 82], //Temple
+		[24, 92], //Wizard tower
+		[27, 93], //Shipment
+		[38, 106], //Alchemy lab
+		[45, 115], //Portal
+		[53, 125], //Time machine
+		[65, 135], //Antimatter condenser
+		[70, 140], //Prism
+		[81, 147], //Chancemaker
+		[87, 153], //Fractal engine
+		[100, 160], //Javascript console
+		[109, 169], //Idleverse
+		[115, 177], //Cortex baker
+		[119, 185]]; //You
 var atMarket;
 var autoAscensionActive;
 var seasonCounter;
@@ -59,12 +41,16 @@ var seasonCounter;
 var autoSanta;
 var autoHearts;
 var autoDragon;
+var pet;
+var petting;
+var pettingCount;
 var autoBuy;
 var autoAscension;
 var fortuneCheck;
 var goldenClick;
 var seasonCheck;
 var dragonCheck;
+var dragonPetCheck;
 var noWrinkler;
 var collectHCData;
 var collectSMdata;
@@ -85,6 +71,7 @@ startAI();
 function startAI() {
 	autoAscensionActive = false;
 	buyingThings = false;
+	petting = false;
 	seasonCounter = 0;
 	
     autoBuy = setInterval(MarketCheck, (10 * 60 * 1000)); //functioning
@@ -98,6 +85,8 @@ function startAI() {
     seasonCheck = setInterval(CycleSeasons, (30 * 60 * 1000)); //functioning
 	
 	dragonCheck = setInterval(TrainDragon, (10 * 60 * 1000)); //functioning
+	
+	dragonPetCheck = setInterval(PetDragonCycle, (15 * 60 * 1000)); //untested
 
     noWrinkler = setInterval(Game.CollectWrinklers, (30 * 60 * 1000)); //functioning
 	
@@ -134,6 +123,8 @@ function stopAI() {
     clearInterval(seasonCheck);
 	
 	clearInterval(dragonCheck);
+	
+	clearInterval(dragonPetCheck);
 
     clearInterval(noWrinkler);
 
@@ -168,7 +159,7 @@ function MarketCheck() {
 
     if (!buyingThings) {
         atMarket = setInterval(BuyThings, 10);
-        console.log("Going to Market:\n" + new Date().getTime());
+        //console.log("Going to Market:\n" + new Date().getTime());
     }
 }
 
@@ -204,7 +195,7 @@ function BuyThings() {
     if ((!buildingBought && !upgradeBought)) {
         clearInterval(atMarket);
         buyingThings = false;
-        console.log("Done at Market:\n" + new Date().getTime());
+        //console.log("Done at Market:\n" + new Date().getTime());
     }
 }
 
@@ -369,7 +360,7 @@ function SeasonChecker() {
                 count++;
         }
 		
-		if (Game.UpgradesById[645].unlocked == 1) count++; //Valentines last heart
+		if (seasonCounter == 1 && Game.UpgradesById[645].unlocked == 1) count++; //Valentines last heart
 
         if (count >= seasonUpgrades[seasonCounter]){
             seasonCounter++;
@@ -391,10 +382,11 @@ function UpgradeSanta() {
 	} else {
 		if (Buyable(152))
 			Game.UpgradesById[152].buy();
-		if (Game.UpgradesById[152].bought == 1) {
+		if (Game.UpgradesById[152].bought == 1 && Game.specialTab == '') {
 			Game.specialTab = "santa";
+			Game.ToggleSpecialMenu(true);
 			Game.UpgradeSanta();
-			Game.ToggleSpecialMenu();
+			Game.ToggleSpecialMenu(false);
 		}
 	}
 }
@@ -449,17 +441,19 @@ function TrainDragon() {
     if (Game.UpgradesById[324].bought == 1 && Game.ObjectsById[Game.ObjectsById.length - 1].amount >= 400){
 		autoDragon = setInterval(BuyDragon,(5 * 1000));
 		
-		if (Game.dragonLevel > 12) {
+		if (Game.dragonLevel > 12 && Game.specialTab == '') {
 			Game.specialTab = "dragon";
+			Game.ToggleSpecialMenu(true);
 			Game.SetDragonAura(9,0);
 			Game.ConfirmPrompt();
-			Game.ToggleSpecialMenu();
+			Game.ToggleSpecialMenu(false);
 		}
-		if (Game.dragonLevel > Game.dragonLevels.length - 2) {
+		if (Game.dragonLevel > Game.dragonLevels.length - 2 && Game.specialTab == '') {
 			Game.specialTab = "dragon";
+			Game.ToggleSpecialMenu(true);
 			Game.SetDragonAura(4,1);
 			Game.ConfirmPrompt();
-			Game.ToggleSpecialMenu();
+			Game.ToggleSpecialMenu(false);
 			
 			clearInterval(dragonCheck);
 		}
@@ -467,9 +461,47 @@ function TrainDragon() {
 	}
 }
 
+function PetDragonCycle(){
+	if (Game.dragonLevel >= 8 && !petting){
+		if (Game.specialTab == ''){
+			dragonUpgrades = Game.Upgrades['Dragon scale'].unlocked + Game.Upgrades['Dragon claw'].unlocked + Game.Upgrades['Dragon fang'].unlocked + Game.Upgrades['Dragon teddy bear'].unlocked
+			
+			if (dragonUpgrades < 4){
+				Game.specialTab = 'dragon';
+				Game.ToggleSpecialMenu(true);
+				petting = true;
+				pettingCount = 0;
+				pet = setInterval(PetDragon, 500);
+			}else clearInterval(dragonPetCheck);
+		}else setTimeout(PetDragonCycle, 60 * 1000);
+	}
+}
+
+function PetDragon(){
+	dragonUpgrades = Game.Upgrades['Dragon scale'].unlocked + Game.Upgrades['Dragon claw'].unlocked + Game.Upgrades['Dragon fang'].unlocked + Game.Upgrades['Dragon teddy bear'].unlocked;
+	
+	if (Game.specialTab == 'dragon'){
+		Game.ClickSpecialPic();
+		pettingCount++;
+	} else {
+		petting = false;
+		clearInterval(pet);
+		setTimeout(PetDragonCycle, 60 * 1000);
+	}
+	
+	if (dragonUpgrades < (Game.Upgrades['Dragon scale'].unlocked + Game.Upgrades['Dragon claw'].unlocked + Game.Upgrades['Dragon fang'].unlocked + Game.Upgrades['Dragon teddy bear'].unlocked) || pettingCount >= 500) {
+		petting = false;
+		clearInterval(pet);
+		Game.ToggleSpecialMenu(false);
+	}
+}
+
 function BuyDragon(){
-	if (Game.dragonLevel < Game.dragonLevels.length - 1){
+	if (Game.dragonLevel < Game.dragonLevels.length - 1 && Game.specialTab == ''){
+		Game.specialTab = "dragon";
+		Game.ToggleSpecialMenu(true);
 		Game.UpgradeDragon();
+		Game.ToggleSpecialMenu(false);
 	} else {
 		clearInterval(autoDragon);
 	}
@@ -551,7 +583,7 @@ function buyTime(stock, value, rank){ //returns difference of value and rank ave
 }
 
 function CheckStockMarket(){ //this function to be run every 60 seconds
-	var avg;
+	var keyVals;
 	var min;
 	var multiplier;
 	
@@ -560,18 +592,18 @@ function CheckStockMarket(){ //this function to be run every 60 seconds
 	getStockPrices();
 	
 	for (var i in stocksBought){
-		avg = marketAvg[i];
+		keyVals = marketAvg[i];
 		
 		if (stocksBought[i][1] > 0){ //if I own stock.  logic to sell
-			if (stocksCurrent[i][1] > stocksBought[i][1]){
+			if (stocksCurrent[i][1] > marketAvg[i][1] - 1){ //"-1" because the data that was analized was all floored
 				stocksBought[i][3] = sellStock(i);
-			}else if (stocksBought[i][2] - Date.now() > (30 * 60 * 1000) && stocksCurrent[i][1] > marketAvg[i] * 0.9){  //I should add logic here to check if the stock is rising or falling and attempt to not loose as much money so I can hopefully buy again at a lower price.
+/*			}else if (stocksBought[i][2] - Date.now() > (30 * 60 * 1000) && stocksCurrent[i][1] > marketAvg[i] * 0.9){  //I should add logic here to check if the stock is rising or falling and attempt to not loose as much money so I can hopefully buy again at a lower price.
 				stocksBought[i][3] = sellStock(i);
-			}else{
+*/			}else{
 				stocksBought[i][3] = false;
 			}
 		}else{ //I don't own stock.  logic to buy
-			if (stocksCurrent[i][1] < marketAvg[i]){
+			if (stocksCurrent[i][1] < marketAvg[i][0] + 1){ //"+1" because the data that was analized was all floored
 				stocksBought[i][3] = buyStock(i);
 			}
 		}
