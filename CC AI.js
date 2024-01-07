@@ -602,7 +602,7 @@ function CheckStockMarket(){ //this function to be run every 60 seconds
 		}else{ //I don't own stock.  logic to buy
 			if (stocksCurrent[i][1] < marketAvg[i][0] + 1){ //"+1" because the data that was analized was all floored
 				stocksBought[i][3] = buyStock(i);
-			}
+			}else stocksBought[i][3] = false;
 		}
 	}
 }
